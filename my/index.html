@@ -15,7 +15,7 @@
     href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
   />
 </head>
-<body class="bg-gray-900 text-gray-100">
+<body id="body" class="bg-gray-900 text-gray-100 duration-1000">
 
     <div class="">
         <div class="flex ">
@@ -182,7 +182,66 @@
                     </div>
                 </div>
            
-          
+                <div class="mt-5 ml-2">
+                    <h1 class="text-2xl font-semibold">Your Recent #IMGs</h1>
+
+                    <div class="grid md:grid-cols-2 gap-3">
+                        <div class="grid md:grid-cols-2  gap-3 mt-3">
+                            <a href="">
+                                <div title="My #IMG1" class=" h-32 bg-gray-700 rounded-lg hover:scale-95 hover:rounded-2xl duration-300 p-3">
+                                    <h1>#IMG 01</h1>
+                                    <h1 class="text-xs">Created on: 2022-10-05</h1>
+                                
+                                </div>
+                            </a>
+
+                            <a href="">
+                                <div title="My #IMG1" class=" h-32 bg-gray-700 rounded-lg hover:scale-95 hover:rounded-2xl duration-300 p-3">
+                                    <h1>#IMG 02</h1>
+                                    <h1 class="text-xs">Created on: 2022-10-05</h1>
+                                
+                                </div>
+                            </a>
+
+                            <a href="">
+                                <div title="My #IMG1" class=" h-32 bg-gray-700 rounded-lg hover:scale-95 hover:rounded-2xl duration-300 p-3">
+                                    <h1>#IMG 02</h1>
+                                    <h1 class="text-xs">Created on: 2022-10-05</h1>
+                                
+                                </div>
+                            </a>
+
+                            <a href="">
+                                <div title="My #IMG1" class=" h-32 bg-gray-700 rounded-lg hover:scale-95 hover:rounded-2xl duration-300 p-3">
+                                    <h1>#IMG 02</h1>
+                                    <h1 class="text-xs">Created on: 2022-10-05</h1>
+                                
+                                </div>
+                            </a>
+
+       
+                           <div class="col-span-2 flex gap-2" href="">
+                            <button class="bg-indigo-600 py-2 px-3 rounded-xl font-semibold text-center w-3/5 xl:w-4/5">View All</button>
+                            <button id="body2" onmouseover="hoverpurge()" onmouseout="hoverpurge2()" class="bg-red-600 py-2 px-3 rounded-xl font-semibold text-center w-2/5 xl:w-1/5 hover:rounded-2xl duration-300">Purge All</button>
+                           </div>
+                            
+                            
+                        </div>
+                        <div class="p-3 bg-gray-800 rounded-xl h-fit">
+                            <h1 class="text-2xl font-semibold"><i class="uil uil-bell pr-2"></i>Recent Activities</h1>
+                            
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-5 ml-2">
+                    <h1 class="text-2xl font-semibold">Recent Activities</h1>
+
+                    <div>
+                        
+                    </div>
+                </div>
 
 
                 </div>           
@@ -195,6 +254,21 @@
 	
 
 </body>
+
+<script>
+    function hoverpurge() {
+        document.getElementById("body").classList.add("bg-[#2b0101]");
+
+        document.getElementById("body").classList.remove("bg-gray-900");
+       
+    }
+    function hoverpurge2() {
+        document.getElementById("body").classList.remove("bg-[#2b0101]");
+
+        document.getElementById("body").classList.add("bg-gray-900");
+       
+    }
+</script>
 </html>
 
 
