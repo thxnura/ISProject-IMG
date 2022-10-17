@@ -1,3 +1,9 @@
+<?php
+session_start();
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,13 +19,13 @@
         <div class="flex w-screen h-screen items-center justify-center">
             <div>
                 <img class="w-64 ml-auto mr-auto " src="../src/img/HashIMG.png" alt="">
-                <form action="" method="post">
+                <form action="./login.php" method="post">
                     <div class="flex justify-center mt-5">
-                        <input type="text" class="border border-gray-400 px-5 py-1.5 rounded-lg w-96 bg-transparent text-white" placeholder="Email">
+                        <input name="uname" type="text" class="border border-gray-400 px-5 py-1.5 rounded-lg w-96 bg-transparent text-white" placeholder="Email">
 
                     </div>
                     <div class="flex justify-center mt-5">
-                        <input type="password" class="border border-gray-400 px-5 py-1.5 rounded-lg w-96 bg-transparent text-white" placeholder="Password">
+                        <input name="password" type="password" class="border border-gray-400 px-5 py-1.5 rounded-lg w-96 bg-transparent text-white" placeholder="Password">
                     </div>
                     <div class="flex justify-center mt-5">
                         <button type="submit" class="bg-blue-500 px-5 py-1.5 rounded-lg w-96 text-white">Login</button>
