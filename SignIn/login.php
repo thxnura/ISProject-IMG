@@ -1,6 +1,7 @@
 <?php 
 
-session_start(); 
+session_start();
+
 
 include "../dbconn.php";
 
@@ -36,7 +37,7 @@ if (isset($_POST['uname']) && isset($_POST['password'])) {
 
     }else{
 
-        $sql = "SELECT * FROM CustomDetails WHERE uname='$uname' AND password='$pass'";
+        $sql = "SELECT * FROM CustomDetails WHERE uname='$uname' AND pass='$pass'";
 
         $result = mysqli_query($conn, $sql);
 
@@ -44,15 +45,13 @@ if (isset($_POST['uname']) && isset($_POST['password'])) {
 
             $row = mysqli_fetch_assoc($result);
 
-            if ($row['user_name'] === $uname && $row['password'] === $pass) {
+            if ($row['uname'] === $uname && $row['pass'] === $pass) {
 
                 echo "Logged in!";
 
-                $_SESSION['user_name'] = $row['user_name'];
+                $_SESSION['uname'] = $row['uname'];
 
-                $_SESSION['name'] = $row['name'];
-
-                $_SESSION['id'] = $row['id'];
+                $_SESSION['RID'] = $row['RID'];
 
                 header("Location: home.php");
 

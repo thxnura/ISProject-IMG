@@ -1,4 +1,7 @@
-
+<?php
+session_start();
+include "../dbconn.php";
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -168,7 +171,7 @@
             
                 <div>
                     <div class="bg-gray-800 py-2 px-3 rounded-lg flex justify-between items-center">
-                       <h1> Hello, <span class="text-gray-200 font-semibold" title="dscsdcs  &#010; scsdcsd">username</span></h1>
+                       <h1> Hello, <span class="text-gray-200 font-semibold" title="dscsdcs  &#010; scsdcsd"><?php echo  $_SESSION['uname']; ?></span></h1>
                        <div class="flex items-center gap-2">
                             <div title="My Profile" class="w-10 h-10 bg-cover rounded-full cursor-pointer bg-[url('https://images.unsplash.com/photo-1563306406-e66174fa3787?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1974&q=80')] hover:scale-110 duration-300">
 
@@ -187,6 +190,20 @@
 
                     <div class="grid md:grid-cols-2 gap-3 duration-1000">
                         <div class="grid md:grid-cols-2  gap-3 mt-3">
+
+                        <?php
+                        $sql = "SELECT * FROM hasimg";
+                        $result = $conn->query($sql);
+
+                        if ($result->num_rows > 0) {
+                            // output data of each row
+                            while($row = $result->fetch_assoc()) {
+                                echo "sdc"; 
+                            }
+                        } else {
+                            echo "0 results";
+                        }
+                        ?>
                             <a href="">
                                 <div title="My #IMG1" class=" h-32 bg-gray-700 rounded-lg hover:scale-95 hover:rounded-2xl duration-300 p-3">
                                     <h1>#IMG 01</h1>
@@ -195,29 +212,7 @@
                                 </div>
                             </a>
 
-                            <a href="">
-                                <div title="My #IMG1" class=" h-32 bg-gray-700 rounded-lg hover:scale-95 hover:rounded-2xl duration-300 p-3">
-                                    <h1>#IMG 02</h1>
-                                    <h1 class="text-xs">Created on: 2022-10-05</h1>
-                                
-                                </div>
-                            </a>
-
-                            <a href="">
-                                <div title="My #IMG1" class=" h-32 bg-gray-700 rounded-lg hover:scale-95 hover:rounded-2xl duration-300 p-3">
-                                    <h1>#IMG 02</h1>
-                                    <h1 class="text-xs">Created on: 2022-10-05</h1>
-                                
-                                </div>
-                            </a>
-
-                            <a href="">
-                                <div title="My #IMG1" class=" h-32 bg-gray-700 rounded-lg hover:scale-95 hover:rounded-2xl duration-300 p-3">
-                                    <h1>#IMG 02</h1>
-                                    <h1 class="text-xs">Created on: 2022-10-05</h1>
-                                
-                                </div>
-                            </a>
+                            
 
        
                            <div class="col-span-2 flex gap-2" href="">
