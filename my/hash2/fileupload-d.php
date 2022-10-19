@@ -103,11 +103,55 @@ for ($x = 0; $x < ($width*$height); $x++) { //Loop through pixel by pixel
       if (toString(substr($real_message, -8)) === '|') { //Whats the value of the last 8 digits?
           echo ('done<br>'); //Yes we're done now
           $real_message = toString(substr($real_message,0,-8)); //convert to string and remove /
-          echo ('Result: ');
-          echo $real_message; //Show
+          //echo ('Result: ');
+          //echo $real_message; //Show
 
           //delete the temp image
-            unlink($tempfile);
+          unlink($tempfile);
+
+          $xmldata = $real_message;
+          //extract data
+          $metadataxml = array();
+         
+          foreach(json_decode($xmldata,true)as $key=>$value){
+              $metadataxml[$key] = $value;
+         
+              if ($key == "ID"){
+                  $id = $value;
+              }
+
+              if ($key == "Message"){
+                  $Message = $value;
+              }
+          } 
+         
+          echo $id;
+          echo '<br>'.$Message;
+
+          $decryption_iv = '1234567891011121';
+
+          include "../../dbconn.php";
+          //get the key from db
+            $sql = "SELECT * FROM hasimg WHERE  HashID = '$id'";
+            $result = mysqli_query($conn, $sql);
+
+            if (mysqli_num_rows($result) > 0) {
+                // output data of each row
+                while($row = mysqli_fetch_assoc($result)) {
+                    $key = $row["HashKey"];
+                }
+            } 
+
+            $decryption_key = $key;
+
+            $ciphering = "AES-128-CTR";
+            $decryption_iv = '1234567891011121';
+            $options   = 0;
+
+            $decrypted_message = openssl_decrypt ($Message, $ciphering,$decryption_key, $options, $decryption_iv);
+
+            echo '<br>'.$decrypted_message;
+
           die;
       }
       $count = 0; //Reset counter
@@ -116,4 +160,3 @@ for ($x = 0; $x < ($width*$height); $x++) { //Loop through pixel by pixel
   $pixelX++; //Change x coordinates to next
 }
 ?>
-

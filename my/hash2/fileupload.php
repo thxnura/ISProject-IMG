@@ -1,5 +1,13 @@
 <?php
+//Get the post Message
+//check the isset
+if (isset($_POST['Message'])){
+ $Message = $_POST['Message'];
+}
+else {
+    $Message = "No Message";
 
+}
 ?>
 
 
@@ -49,11 +57,12 @@ if ($uploadOk == 0) {
     $tempfile = htmlspecialchars( basename( $_FILES["fileToUpload"]["name"]));
     $tempfile = "temp/" . $tempfile; 
 
-    if (isset($_POST['Hint'])){
+    
         include "../../dbconn.php";
        $hint = $_POST['Hint'];
-       $id = 'pala';
-       $sql = "INSERT INTO hasimg (Hint,uname,TempFile) VALUES ('$hint','$id','$tempfile')";
+      
+       $thekey =  rand(111111111111,999999999999);
+       $sql = "INSERT INTO hasimg (Hint,uname,TempFile,HashKey) VALUES ('$hint','pala','$tempfile','$thekey')";
        $result = mysqli_query($conn, $sql);
        if ($result){
            echo "Hint updated";
@@ -61,7 +70,7 @@ if ($uploadOk == 0) {
        else{
            echo "error".mysqli_error($conn);
        }
-   }
+
    
 
 
@@ -73,7 +82,42 @@ if ($uploadOk == 0) {
 
 
 
+<?php
 
+
+
+$simple_string = $Message;
+$ciphering = "AES-128-CTR";
+
+$iv_length = openssl_cipher_iv_length($ciphering);
+$options   = 0;
+
+$encryption_iv = '1234567891011121';
+
+$encryption_key = $thekey;
+
+$encryption = openssl_encrypt($simple_string, $ciphering, $encryption_key, $options, $encryption_iv);
+
+//get the input id
+
+$inputid = "SELECT * FROM hasimg WHERE HashKey = '$thekey'";
+$result = mysqli_query($conn, $inputid);
+if ($result->num_rows > 0) {
+
+    while ($row = $result->fetch_assoc()) {
+       $id = $row['HashID'];
+    }
+} else {
+    $id = "0";
+}
+
+
+$allmessage = '{"ID":"'.$id.'","Message":"'.$encryption.'"}';
+
+
+
+
+?>
 
 
 
@@ -82,7 +126,7 @@ include('functions.php');
 
 
 //Edit below variables
-$msg = 'yo its testing the system'; //To encrypt
+$msg = $allmessage; //To encrypt
 $src = $tempfile; //Start image
 
 $msg .='|'; //EOF sign, decided to use the pipe symbol to show our decrypter the end of the message
