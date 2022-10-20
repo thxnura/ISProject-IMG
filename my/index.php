@@ -195,6 +195,68 @@ if (isset($_SESSION['uname']) ) {
                 </div>
            
                 <div class="mt-5 ml-2">
+
+                <div class='bg-gray-800 rounded-lg p-3 space-x-3 border-l-4 my-3'>
+                    <button class='border p-1 rounded-lg px-3 bg-gray-700 border-gray-600 hover:scale-95' data-modal-toggle="medium-modal">
+                        Create a #IMG
+                    </button>
+
+                    <button class='border p-1 rounded-lg px-3 bg-gray-700 border-gray-600  hover:scale-95' type="button" data-modal-toggle="popup-modal">
+                        Unmask a #IMG
+                    </button>
+                </div>
+
+                <!-- Default Modal -->
+                <div id="medium-modal" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 w-full md:inset-0 h-modal md:h-full">
+                    <div class="relative p-4 w-full max-w-lg h-full md:h-auto">
+                        <!-- Modal content -->
+                        <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                            <!-- Modal header -->
+                            <div class="flex justify-between items-center p-5 rounded-t border-b dark:border-gray-600">
+                                <h3 class="text-xl font-medium text-gray-900 dark:text-white">
+                                    Mask your #IMG
+                                </h3>
+                                <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="medium-modal">
+                                    <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                                    <span class="sr-only">Close modal</span> 
+                                </button>
+                            </div>
+                            <!-- Modal body -->
+                            <div class="p-6 space-y-6">
+                                
+
+                            <form class='space-y-3' action="hash2/fileupload.php" method="post"  enctype="multipart/form-data">
+                                <div class="relative">
+                                    <input name="HInt" type="text" name="hint" class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " />
+                                    <label for="floating_outlined" class="absolute text-sm text-gray-500 dark:text-gray-100 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-700 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">
+                                        Hint
+                                    </label>
+                                </div>
+
+                                <div class="relative">
+                                    <input type="text" name="Message" class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " />
+                                    <label for="floating_outlined" class="absolute text-sm text-gray-500 dark:text-gray-100 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-700 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">
+                                        Message
+                                    </label>
+                                </div>
+
+                                
+                            <div>
+                                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300" for="file_input">Upload file</label>
+                                <input name="fileToUpload" class="block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"   type="file">
+                                <p class="mt-1 text-sm text-gray-500 dark:text-gray-300" id="file_input_help">JPG (MAX. 800x400px).</p>
+                            </div>
+
+                            <input data-modal-toggle="medium-modal" type="submit" value="Create" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+
+                            </form>
+
+                            </div>
+                            <!-- Modal footer -->
+                            
+                        </div>
+                    </div>
+                </div>
                     <h1 class="text-2xl font-semibold">Your Recent #IMGs</h1>
 
                     <div class="grid md:grid-cols-2 gap-3 duration-1000">
@@ -226,7 +288,7 @@ if (isset($_SESSION['uname']) ) {
                                         <div class="relative bg-white rounded-lg shadow dark:bg-gray-800">
                                         <div class="flex justify-between items-start p-4 rounded-t border-b dark:border-gray-600">
                                             <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                                                Terms of Service
+                                                Unmask a #IMG
                                             </h3>
                                             <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="popup-modal">
                                                 <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>

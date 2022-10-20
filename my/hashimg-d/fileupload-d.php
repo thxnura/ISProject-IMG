@@ -113,21 +113,29 @@ for ($x = 0; $x < ($width*$height); $x++) { //Loop through pixel by pixel
           $xmldata = $real_message;
           //extract data
           $metadataxml = array();
-         
+
+          //check xml is empty
+          
+
           foreach(json_decode($xmldata,true)as $key=>$value){
               $metadataxml[$key] = $value;
          
               if ($key == "ID"){
                   $id = $value;
-              }
+              } 
 
               if ($key == "Message"){
                   $Message = $value;
-              }
+              } 
           } 
          
-          //echo $id;
-          //echo '<br>'.$Message;
+          if (isset($id)) {
+
+          } else {
+              echo "ID not found";
+              header ( "Location: ../error.php?id=23");
+              die();
+          }
 
           $decryption_iv = '1234567891011121';
 
@@ -142,7 +150,11 @@ for ($x = 0; $x < ($width*$height); $x++) { //Loop through pixel by pixel
                     $key = $row["HashKey"];
                     $HashID = $row["HashID"];
                 }
+            } else {
+              exit('no enries found');
             } 
+
+           
 
             //select random value to 2 factor auth
             $twofactor = random_int(10000, 99999);
@@ -190,7 +202,7 @@ for ($x = 0; $x < ($width*$height); $x++) { //Loop through pixel by pixel
           die;
       }
       $count = 0; //Reset counter
-  }
+  } 
 
   $pixelX++; //Change x coordinates to next
 }
