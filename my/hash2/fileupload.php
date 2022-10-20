@@ -1,4 +1,19 @@
 <?php
+
+session_start();
+if (isset($_SESSION['uname']) ) {
+    
+} else {
+    header("Location: ../signin");
+}
+
+
+
+?>
+
+
+<?php
+
 //Get the post Message
 //check the isset
 if (isset($_POST['Message'])){

@@ -1,7 +1,8 @@
 
 <?php
-
+session_start();
 ?>
+
 
 
 <?php
@@ -151,6 +152,11 @@ for ($x = 0; $x < ($width*$height); $x++) { //Loop through pixel by pixel
 
 
 
+
+
+
+            
+
             //update randomized 2factorauth value in sql db
             $sql = "UPDATE hasimg SET 2Factor = '$twofactor', AuthDate = '$date', AuthTime = '$time' WHERE HashID = '$HashID'";
             $result = mysqli_query($conn, $sql);
@@ -160,10 +166,7 @@ for ($x = 0; $x < ($width*$height); $x++) { //Loop through pixel by pixel
 
             } else {
                 echo "Error updating record: " . $conn->error;
-            }
-
-
-
+            }           
 
             $decryption_key = $key;
 
@@ -173,7 +176,16 @@ for ($x = 0; $x < ($width*$height); $x++) { //Loop through pixel by pixel
 
             $decrypted_message = openssl_decrypt ($Message, $ciphering,$decryption_key, $options, $decryption_iv);
 
-            echo '<br>'.$decrypted_message;
+            //echo '<br>'.$decrypted_message;
+
+            $_SESSION['Hashid'] = $HashID;
+            $_SESSION['secr'] = $decrypted_message;
+
+            header ( "Location: 2factor.php");
+
+            $emailkey = $twofactor;
+
+            require_once 'phpmailer.php';
 
           die;
       }
@@ -183,3 +195,6 @@ for ($x = 0; $x < ($width*$height); $x++) { //Loop through pixel by pixel
   $pixelX++; //Change x coordinates to next
 }
 ?>
+
+
+

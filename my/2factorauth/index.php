@@ -1,15 +1,206 @@
 <?php
 session_start();
-include "../dbconn.php";
+include "../../dbconn.php";
 
 if (isset($_SESSION['uname']) ) {
     
 } else {
-    header("Location: ../signin");
+    header("Location: ../../signin");
 }
 
 
 ?>
+
+<?php
+$target_dir = "temp-d/";
+$target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
+$uploadOk = 1;
+$imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
+
+// Check if image file is a actual image or fake image
+if(isset($_POST["submit"])) {
+  $check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
+  if($check !== false) {
+    //echo "File is an image - " . $check["mime"] . ".";
+    $uploadOk = 1;
+  } else {
+    echo "File is not an image.";
+    $uploadOk = 0;
+  }
+}
+
+// Check if file already exists
+if (file_exists($target_file)) {
+  echo "Sorry, file already exists.";
+  $uploadOk = 0;
+}
+
+// Check file size
+if ($_FILES["fileToUpload"]["size"] > 10000000000) {
+  echo "Sorry, your file is too large.";
+  $uploadOk = 0;
+}
+
+// Allow certain file formats
+if($imageFileType != "png")  {
+  echo "Sorry, only PNG files are allowed.";
+  $uploadOk = 0;
+}
+
+// Check if $uploadOk is set to 0 by an error
+if ($uploadOk == 0) {
+  echo "Sorry, your file was not uploaded.";
+// if everything is ok, try to upload file
+} else {
+  if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
+    //echo "The file ". htmlspecialchars( basename( $_FILES["fileToUpload"]["name"])). " has been uploaded.";
+    $tempfile = htmlspecialchars( basename( $_FILES["fileToUpload"]["name"]));
+    $tempfile = "temp-d/" . $tempfile; 
+
+    //add data to DB 
+    
+    //session cid
+    $cid = $_SESSION['cid'];
+
+
+    $sql = "INSERT INTO DecryptData (CID,FileName) VALUES ('$cid','$tempfile')";
+    $result = mysqli_query($conn, $sql);
+
+      
+
+
+  } else {
+    echo "Sorry, there was an error uploading your file.";
+  }
+}
+?>
+
+
+<?php
+include('functions.php');
+
+$src = $tempfile; //Change this to the image to decrypt
+
+
+$img = imagecreatefrompng($src); //Returns image identifier
+$real_message = ''; //Empty variable to store our message
+
+$count = 0; //Wil be used to check our last char
+$pixelX = 0; //Start pixel x coordinates
+$pixelY = 0; //start pixel y coordinates
+
+list($width, $height, $type, $attr) = getimagesize($src); //get image size
+
+for ($x = 0; $x < ($width*$height); $x++) { //Loop through pixel by pixel
+  if($pixelX === $width+1){ //If this is true, we've reached the end of the row of pixels, start on next row
+    $pixelY++;
+    $pixelX=0;
+  }
+
+  if($pixelY===$height && $pixelX===$width){ //Check if we reached the end of our file
+    echo('Max Reached');
+    die();
+  }
+
+  $rgb = imagecolorat($img,$pixelX,$pixelY); //Color of the pixel at the x and y positions
+  $r = ($rgb >>16) & 0xFF; //returns red value for example int(119)
+  $g = ($rgb >>8) & 0xFF; //^^ but green
+  $b = $rgb & 0xFF;//^^ but blue
+
+  $blue = toBin($b); //Convert our blue to binary
+
+  $real_message .= $blue[strlen($blue) - 1]; //Ad the lsb to our binary result
+
+  $count++; //Coun that a digit was added
+
+  if ($count == 8) { //Every time we hit 8 new digits, check the value
+      if (toString(substr($real_message, -8)) === '|') { //Whats the value of the last 8 digits?
+          //echo ('done<br>'); //Yes we're done now
+          $real_message = toString(substr($real_message,0,-8)); //convert to string and remove /
+          //echo ('Result: ');
+          //echo $real_message; //Show
+
+          //delete the temp image
+          unlink($tempfile);
+
+          $xmldata = $real_message;
+          //extract data
+          $metadataxml = array();
+         
+          foreach(json_decode($xmldata,true)as $key=>$value){
+              $metadataxml[$key] = $value;
+         
+              if ($key == "ID"){
+                  $id = $value;
+              }
+
+              if ($key == "Message"){
+                  $Message = $value;
+              }
+          } 
+         
+          //echo $id;
+          //echo '<br>'.$Message;
+
+          $decryption_iv = '1234567891011121';
+
+          include "../../dbconn.php";
+          //get the key from db
+            $sql = "SELECT * FROM hasimg WHERE  HashID = '$id'";
+            $result = mysqli_query($conn, $sql);
+
+            if (mysqli_num_rows($result) > 0) {
+                // output data of each row
+                while($row = mysqli_fetch_assoc($result)) {
+                    $key = $row["HashKey"];
+                    $HashID = $row["HashID"];
+                }
+            } 
+
+            //select random value to 2 factor auth
+            $twofactor = random_int(10000, 99999);
+            date_default_timezone_set('Asia/Colombo');
+            $time = date('H:i:s');
+            $date = date('Y-m-d');
+
+
+
+            //update randomized 2factorauth value in sql db
+            $sql = "UPDATE hasimg SET 2Factor = '$twofactor', AuthDate = '$date', AuthTime = '$time' WHERE HashID = '$HashID'";
+            $result = mysqli_query($conn, $sql);
+
+            //check result is true
+            if ($result === TRUE) {
+
+            } else {
+                echo "Error updating record: " . $conn->error;
+            }
+
+
+
+
+            $decryption_key = $key;
+
+            $ciphering = "AES-128-CTR";
+            $decryption_iv = '1234567891011121';
+            $options   = 0;
+
+            $decrypted_message = openssl_decrypt ($Message, $ciphering,$decryption_key, $options, $decryption_iv);
+
+            echo '<br>'.$decrypted_message;
+
+          die;
+      }
+      $count = 0; //Reset counter
+  }
+
+  $pixelX++; //Change x coordinates to next
+}
+?>
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -35,7 +226,7 @@ if (isset($_SESSION['uname']) ) {
                <!-- Desktop View -->
                 <div :class="{'hidden md:flex': open, 'flex': !open}" class="flex flex-col items-center w-48 h-screen overflow-hidden text-gray-300 bg-gray-800 rounded  " x-on:click="open = ! open">
                     <a class="flex items-center w-full px-3 mt-3" href="#">
-                        <img src="../src/img/HashIMG.png"class="w-20 h-auto" alt="">
+                        <img src="../../src/img/HashIMG.png"class="w-20 h-auto" alt="">
                         <span class="ml-2 text-sm font-bold">| Home</span>
                     </a>
                     <div class="w-full px-2">
@@ -195,87 +386,21 @@ if (isset($_SESSION['uname']) ) {
                 </div>
            
                 <div class="mt-5 ml-2">
-                    <h1 class="text-2xl font-semibold">Your Recent #IMGs</h1>
-
-                    <div class="grid md:grid-cols-2 gap-3 duration-1000">
-                        <div class="grid md:grid-cols-2  gap-3 mt-3">
-
-                        <?php
-                        //session cid
-                        $cid = $_SESSION['cid'];
-                        
-                        $sql = "SELECT * FROM hasimg WHERE cid = '$cid'";
-                        $result = $conn->query($sql);
-
-                        if ($result->num_rows > 0) {
-                            // output data of each row
-                            while($row = $result->fetch_assoc()) {
-                               
-                        ?>
-                             
-                                    <div title="My #IMG1" class=" h-32 bg-gray-700 rounded-lg hover:scale-95 hover:rounded-2xl duration-300 p-3" type="button" data-modal-toggle="popup-modal">
-                                        <h1>#IMG <?php echo $row["HashID"] ?></h1>
-                                        <h1> <?php echo $row["Hint"] ?></h1>
-                                        <h1 class="text-xs">Created on: 2022-10-05</h1>                                                                
-                                    </div> 
-                            
-                                
-
-                                <div id="popup-modal" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 md:inset-0 h-modal md:h-full">
-                                    <div class="relative p-4 w-full max-w-2xl h-full md:h-auto">
-                                        <div class="relative bg-white rounded-lg shadow dark:bg-gray-800">
-                                        <div class="flex justify-between items-start p-4 rounded-t border-b dark:border-gray-600">
-                                            <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                                                Terms of Service
-                                            </h3>
-                                            <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="popup-modal">
-                                                <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
-                                                <span class="sr-only">Close modal</span>
-                                            </button>
-                                        </div>
-                                            <div class="p-6 text-center ">
-                                                <form action="./hashimg-d/fileupload-d.php" method="post" enctype="multipart/form-data">
-                                                <div class="relative text-left">
-                                                 
-                                                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300" for="file_input">Upload the #Image</label>
-                                                    <input onchange="this.form.submit()" class="block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" name="fileToUpload" id="fileToUpload" type="file">
-                                                    <p class="mt-1 text-xs text-red-500" id="file_input_help">Only png file format is allowed!</p>
-
-                                                </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
+                    <div class='fl'>
+                        <div class='bg-gray-700 p-5'>
+                            <div class='grid grid-cols-2'>
+                                <div class="p-3 rounded-xl bg-[url('<?php echo $tempfile ?>')] bg-cover h-96">
+                                    <h1>Uploaded Image</h1>
                                 </div>
-                            
 
-                        <?php
-                               
-                            }
-                        } else {
-                            echo "0 results";
-                        }
-                        
-                        ?>
+                                <div>
+                                    sdcsdc
+                                </div>
 
-                            
-
-       
-                           <div class="col-span-2 flex gap-2" href="">
-                            <button class="bg-indigo-600 py-2 px-3 rounded-xl font-semibold text-center w-3/5 xl:w-4/5">View All</button>
-                            <button id="body2" onmouseover="hoverpurge()" onmouseout="hoverpurge2()" class="bg-red-600 py-2 px-3 rounded-xl font-semibold text-center w-2/5 xl:w-1/5 hover:rounded-2xl duration-300">Purge All</button>
-                           </div>
-                            
-                            
-                        </div>
-                        <div class="p-3 bg-gray-800 rounded-xl h-fit mt-3">
-                            <h1 class="text-2xl font-semibold"><i class="uil uil-bell pr-2"></i>Recent Activities</h1>
-                            
-
+                            </div>
                         </div>
                     </div>
                 </div>
-
                
 
 

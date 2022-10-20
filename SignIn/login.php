@@ -51,9 +51,11 @@ if (isset($_POST['uname']) && isset($_POST['password'])) {
 
                 $_SESSION['uname'] = $row['uname'];
 
-                $_SESSION['RID'] = $row['RID'];
+                $_SESSION['fullname'] = $row['FirstName'].' '.$row['LastName'];
 
-                header("Location: home.php");
+                $_SESSION['cid'] = $row['CID'];
+
+                header("Location: ../my");
 
                 exit();
 
