@@ -89,7 +89,7 @@ if (isset($_SESSION['uname']) ) {
 
                         </div>
                     </div>
-                    <a class="flex items-center justify-center w-full h-16 mt-auto bg-gray-800 hover:bg-gray-700 " href="/logout">
+                    <a class="flex items-center justify-center w-full h-16 mt-auto bg-gray-800 hover:bg-gray-700 " href="../logout">
                         <div class="border flex px-2 py-1 rounded-lg flex items-center gap-2">
                             <span class="ml-2 text-sm font-medium ">Log Out</span>
                             <svg class="w-6 h-6 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -186,9 +186,11 @@ if (isset($_SESSION['uname']) ) {
 
                             </div>
 
-                            <div title="Settings" class="w-10 h-10 bg-cover rounded-full cursor-pointer bg-gray-700 flex items-center justify-center hover:rotate-90 duration-500">
-                                <i class="uil uil-cog text-2xl  text-gray-300 -mt-1 "></i>
-                            </div>
+                            <button  type="button" data-modal-toggle="authentication-modal">
+                                <div title="Settings" class="w-10 h-10 bg-cover rounded-full cursor-pointer bg-gray-700 flex items-center justify-center hover:rotate-90 duration-500">
+                                    <i class="uil uil-cog text-2xl  text-gray-300 -mt-1 "></i>
+                                </div>
+                            </button>
                            
                        </div>
                     </div>
@@ -332,6 +334,24 @@ if (isset($_SESSION['uname']) ) {
                         </div>
                         <div class="p-3 bg-gray-800 rounded-xl h-fit mt-3">
                             <h1 class="text-2xl font-semibold"><i class="uil uil-bell pr-2"></i>Recent Activities</h1>
+                            <div class='ml-5 mt-3 text-gray-400'>
+                                <?php
+                                //select all activities from hasimg
+                                $sql = "SELECT * FROM hasimg WHERE cid = '$cid'";
+                                $result = $conn->query($sql);
+
+                                if ($result->num_rows > 0) {
+                                    // output data of each row
+                                    while($row = $result->fetch_assoc()) {
+                                        if (isset($row["AuthTime"]) AND $row["AuthTime"] != '00:00:00') {
+                                            echo "<li class='text-sm'>#IMG ".$row["HashID"]." was decrypted on ".$row["AuthTime"]." | ".$row["AuthDate"]."</li>";
+                                        }
+                                    }
+                                } else {
+                                    echo "No activities yet";
+                                }
+                                ?>
+                            </div>
                             
 
                         </div>
@@ -347,6 +367,39 @@ if (isset($_SESSION['uname']) ) {
 
 
     </div>
+
+
+
+    <!-- Main modal -->
+<div id="authentication-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 w-full md:inset-0 h-modal md:h-full">
+    <div class="relative p-4 w-full max-w-md h-full md:h-auto">
+        <!-- Modal content -->
+        <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+            <button type="button" class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-800 dark:hover:text-white" data-modal-toggle="authentication-modal">
+                <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                <span class="sr-only">Close modal</span>
+            </button>
+            <div class="py-6 px-6 lg:px-8">
+                <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">Change Password</h3>
+                <form class="space-y-6" action="user-update.php" method="post">
+                    
+                    <div>
+                        <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Current password</label>
+                        <input type="password" name="oldpassword" id="password" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" required>
+                    </div>
+
+                    <div>
+                        <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">New password</label>
+                        <input type="password" name="newpassword" id="password" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" required>
+                    </div>
+                    
+                    <button type="submit" class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Change Password</button>
+                    
+                </form>
+            </div>
+        </div>
+    </div>
+</div> 
 
     
 

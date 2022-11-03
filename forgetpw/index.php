@@ -1,12 +1,6 @@
 <?php
 session_start();
 
-if (isset($_SESSION['uname']) ) {
-    header('Location: ../my');
-
-} 
-
-
 ?>
 
 
@@ -27,19 +21,20 @@ if (isset($_SESSION['uname']) ) {
             <img class="w-40 ml-auto mr-auto mb-10" src="../src/img/HashIMG.png" alt="">
             <div class='bg-gray-800 px-10 py-20 rounded-lg border border-gray-700'>
                 
-                <h1 class='text-center text-white font-semibold text-3xl'>Sign in to your account</h1>
-                <form action="./login.php" method="post">
+                <div class='-translate-y-5 w-96'>
+                    <h1 class='text-left text-white font-semibold text-3xl'>Find Your Account</h1>
+                    <h1 class='text-gray-200 text-sm '>Please enter your email address or mobile number to search for your account.</h1>
+                </div>
+                <form action="./find.php" method="post">
                     <div class="flex justify-center mt-5">
-                        <input name="uname" type="text" class="border border-gray-400 px-5 py-1.5 rounded-lg w-96 bg-transparent text-white" placeholder="Email">
+                        <input name="email" type="email" class="border border-gray-400 px-5 py-1.5 rounded-lg w-96 bg-transparent text-white" placeholder="Email">
 
                     </div>
+                    
                     <div class="flex justify-center mt-5">
-                        <input name="password" type="password" class="border border-gray-400 px-5 py-1.5 rounded-lg w-96 bg-transparent text-white" placeholder="Password">
+                        <button type="submit" class="bg-blue-500 px-5 py-1.5 rounded-lg w-96 text-white">Continue</button>
                     </div>
-                    <div class="flex justify-center mt-5">
-                        <button type="submit" class="bg-blue-500 px-5 py-1.5 rounded-lg w-96 text-white">Login</button>
-                    </div>
-                    <h1 class='text-red-400 translate-y-10 text-sm '><a class='text-red-200' href="../forgetpw">Forgotten password?</a></h1>
+                   
                 </form>
             </div>
 

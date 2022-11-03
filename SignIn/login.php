@@ -19,9 +19,12 @@ if (isset($_POST['uname']) && isset($_POST['password'])) {
 
     }
 
+
+
     $uname = validate($_POST['uname']);
 
     $pass = validate($_POST['password']);
+    $pass = hash('sha256', $pass);
 
     if (empty($uname)) {
 

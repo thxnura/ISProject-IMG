@@ -4,11 +4,11 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
-require '../../phpmailer/phpmailer/src/Exception.php';
-require '../../phpmailer/phpmailer/src/PHPMailer.php';
-require '../../phpmailer/phpmailer/src/SMTP.php';
+require '../phpmailer/phpmailer/src/Exception.php';
+require '../phpmailer/phpmailer/src/PHPMailer.php';
+require '../phpmailer/phpmailer/src/SMTP.php';
 
-require '../../vendor/autoload.php';
+require '../vendor/autoload.php';
 
 
 
@@ -18,7 +18,7 @@ require '../../vendor/autoload.php';
 
     try {
         //Server settings
-        $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
+        //$mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
         $mail->isSMTP();                                            //Send using SMTP
         $mail->SMTPAuth = TRUE;
         $mail->SMTPSecure = 'tls';
@@ -34,11 +34,11 @@ require '../../vendor/autoload.php';
     
         //Content
         $mail->isHTML(true);                                  //Set email format to HTML
-        $mail->Subject = $emailkey.' is your HashIMG verification code';
+        $mail->Subject = ' Password Reset request';
         $mail->Body    =  '
         Dear User,<br>
         <br>
-        We received a #IMG request from your account. Please enter the following code to confirm your request.<br>
+        We received a password reset request from your account. Please enter the following code to confirm your request.<br>
 
         
         <br><b><h1>

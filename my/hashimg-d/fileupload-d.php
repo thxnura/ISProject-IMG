@@ -4,9 +4,8 @@ session_start();
 ?>
 
 
-
 <?php
-$target_dir = "temp-d/";
+$target_dir = "./temp-d/";
 $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
 $uploadOk = 1;
 $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
@@ -49,7 +48,7 @@ if ($uploadOk == 0) {
   if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
     //echo "The file ". htmlspecialchars( basename( $_FILES["fileToUpload"]["name"])). " has been uploaded.";
     $tempfile = htmlspecialchars( basename( $_FILES["fileToUpload"]["name"]));
-    $tempfile = "temp-d/" . $tempfile; 
+    $tempfile = "./temp-d/" . $tempfile; 
 
       
 
@@ -149,6 +148,8 @@ for ($x = 0; $x < ($width*$height); $x++) { //Loop through pixel by pixel
                 while($row = mysqli_fetch_assoc($result)) {
                     $key = $row["HashKey"];
                     $HashID = $row["HashID"];
+                    $cid = $row["cid"];
+                    $hash = $row["Hash"];
                 }
             } else {
               exit('no enries found');
@@ -189,6 +190,13 @@ for ($x = 0; $x < ($width*$height); $x++) { //Loop through pixel by pixel
             $decrypted_message = openssl_decrypt ($Message, $ciphering,$decryption_key, $options, $decryption_iv);
 
             //echo '<br>'.$decrypted_message;
+            //check if the hash is correct
+            if (hash('sha256', $decrypted_message) == $hash) {
+                $_SESSION['HashStatus'] = "true";
+            } else {
+                $_SESSION['HashStatus'] = "false";
+            }
+          
 
             $_SESSION['Hashid'] = $HashID;
             $_SESSION['secr'] = $decrypted_message;
@@ -196,6 +204,21 @@ for ($x = 0; $x < ($width*$height); $x++) { //Loop through pixel by pixel
             header ( "Location: 2factor.php");
 
             $emailkey = $twofactor;
+
+      
+
+            //get email from db
+            $usermail = "SELECT EMAIL FROM CustomDetails WHERE  cid = '$cid'";
+            $result = mysqli_query($conn, $usermail);
+
+            if (mysqli_num_rows($result) > 0) {
+                // output data of each row
+                while($row = mysqli_fetch_assoc($result)) {
+                    $email = $row["EMAIL"];
+                }
+            } else {
+              exit('no enries found');
+            }
 
             require_once 'phpmailer.php';
 

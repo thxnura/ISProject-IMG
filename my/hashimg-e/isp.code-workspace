@@ -7,5 +7,7 @@
 			"path": "D:/SLIIT/Year 03 - Sem 02/ISP/ISPJs"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "isp"
+	}
 }

@@ -76,10 +76,12 @@ if ($uploadOk == 0) {
         include "../../dbconn.php";
        $hint = $_POST['Hint'];
       
+       //hashing the message
+      $hash = hash('sha256', $Message);
        $thekey =  rand(111111111111,999999999999);
        $uname = $_SESSION['uname'];
        $cid = $_SESSION['cid'];
-       $sql = "INSERT INTO hasimg (Hint,uname,TempFile,HashKey,cid) VALUES ('$hint','$uname','$tempfile','$thekey','$cid')";
+       $sql = "INSERT INTO hasimg (Hint,uname,TempFile,HashKey,cid,Hash) VALUES ('$hint','$uname','$tempfile','$thekey','$cid','$hash')";
        $result = mysqli_query($conn, $sql);
        if ($result){
            echo "Hint updated";
